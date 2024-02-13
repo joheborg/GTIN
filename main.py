@@ -1,7 +1,9 @@
 from zenrows import ZenRowsClient
 from bs4 import BeautifulSoup
+from requests.exceptions import HTTPError
 
 retorno = {}
+
 
 def BuscarGTIN(gtin, zenRows):
     url = 'https://cosmos.bluesoft.com.br/produtos/' + str(gtin)
@@ -10,13 +12,14 @@ def BuscarGTIN(gtin, zenRows):
     soup = BeautifulSoup(response.text, 'html.parser')
     return TratarRetorno(soup)
 
+
 def ColetarSRCImage(soup):
     product_divimage = soup.find('div', {"class": 'picture'})
     if product_divimage != None:
         product_imagea = product_divimage.find('a')
         product_image = product_imagea.find('img')
         return "https://cdn-cosmos.bluesoft.com.br/products/" + ColetarGTINProduto(soup)
-        # return product_image["src"]
+
 
 def ColetarInformacaoProduto(soup):
     dt_tags = soup.find_all('dt')
@@ -41,6 +44,7 @@ def ColetarInformacaoProduto(soup):
                 marca = dd.get_text().strip()
         return {"PAISREGISTRO": pais_registro, "FABRICANTE": fabricante, "DISTRIBUIDORES": distribuidores, "MARCA": marca}
 
+
 def ColetarGTINProduto(soup):
     product_gtin = soup.find('span', {"id": 'product_gtin'})
     if product_gtin != None:
@@ -57,6 +61,7 @@ def ColetarGTINProduto(soup):
         resultadopg = resultadopg.replace('</span>', '')
         return resultadopg
 
+
 def ColetarDescricaoProduto(soup):
     product_description = soup.find('span', {"id": 'product_description'})
     if product_description != None:
@@ -71,6 +76,7 @@ def ColetarDescricaoProduto(soup):
                 resultadopd = (str(resultadopd) + str(caractere))
         resultadopd = resultadopd.replace('>', '')
         return resultadopd
+
 
 def ColetarNCMProduto(soup):
     product_ncm = soup.find('span', {"class": 'description'})
@@ -103,6 +109,7 @@ def ColetarNCMProduto(soup):
         descricaoNCM = resultado.replace(codigoNCM + " - ", "")
         return {"CODIGO": codigoNCM,
                 "DESCRICAO": descricaoNCM, "COMPLETO": resultado}
+
 
 def ColetarUnidadesComerciaisProduto(soup):
     product_unidadeTable = soup.find('table')

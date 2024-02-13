@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Produto API</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        #loading {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: rgba(255, 255, 255, .8) url('https://i.stack.imgur.com/FhHRx.gif') 50% 50% no-repeat;
+        }
+
+        body.loading {
+            overflow: hidden;
+        }
+
+        body.loading #loading {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="mt-5">Produto API</h1>
+        <button id="config-btn" class="btn btn-secondary mb-3">
+            <i class="fas fa-cog"></i> Configurações
+        </button>
+        <div id="api-key-div" class="form-group" style="display: none;">
+            <label for="api-key">Chave da API:</label>
+            <input type="text" id="api-key" class="form-control">
+            <button id="save-btn" onclick="salvarConfig();" class="btn btn-primary mt-2">Salvar</button>
+        </div>
+        <div class="form-group">
+            <label for="product-code">Código do Produto:</label>
+            <input type="text" id="product-code" class="form-control">
+        </div>
+        <button id="search-btn" onclick="procurarproduto();" class="btn btn-primary">Pesquisar</button>
+        <div id="result" class="mt-3"></div>
+    </div>
+    <div id="loading"></div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script>
+        var apiKey = "";
+
+        $(document).ready(function () {
+            $('#config-btn').click(function () {
+                $('#api-key-div').toggle();
+            });
+        });
+
+        function procurarproduto() {
+            if (!apiKey) {
+                alert("É necessário uma chave da API.");
+                return;
+            }
+            $("body").addClass("loading");
+            var productCode = $('#product-code').val();
+            var url = `http://127.0.0.1:8000/${apiKey}/${productCode}`;
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                    $("body").removeClass("loading");
+                    // Atualize o elemento #result com os dados retornados
+                    var resultHTML = `
+                            <h3>${data.NOMEPRODUTO}</h3>
+                            <img src="${data.IMAGEM}" alt="${data.NOMEPRODUTO}" style="width: 200px;">
+                            <p><strong>GTIN:</strong> ${data.GTIN}</p>
+                            <h4>Unidades Comerciais</h4>
+                            <p><strong>GTIN:</strong> ${data.UNIDADESCOMERCIAIS.GTIN}</p>
+                            <p><strong>Tipo:</strong> ${data.UNIDADESCOMERCIAIS.TIPO}</p>
+                            <p><strong>Embalagem:</strong> ${data.UNIDADESCOMERCIAIS.EMBALAGEM}</p>
+                            <p><strong>Lastro:</strong> ${data.UNIDADESCOMERCIAIS.LASTRO}</p>
+                            <p><strong>Camada:</strong> ${data.UNIDADESCOMERCIAIS.CAMADA}</p>
+                            <p><strong>Comprimento:</strong> ${data.UNIDADESCOMERCIAIS.COMPRIMENTO}</p>
+                            <p><strong>Altura:</strong> ${data.UNIDADESCOMERCIAIS.ALTURA}</p>
+                            <p><strong>Largura:</strong> ${data.UNIDADESCOMERCIAIS.LARGURA}</p>
+                            <p><strong>Bruto:</strong> ${data.UNIDADESCOMERCIAIS.BRUTO}</p>
+                            <p><strong>Líquido:</strong> ${data.UNIDADESCOMERCIAIS.LIQUIDO}</p>
+                            <h4>NCM</h4>
+                            <p><strong>Código:</strong> ${data.NCM.CODIGO}</p>
+                            <p><strong>Descrição:</strong> ${data.NCM.DESCRICAO}</p>
+                            <p><strong>Completo:</strong> ${data.NCM.COMPLETO}</p>
+                            <h4>Informação</h4>
+                            <p><strong>País de Registro:</strong> ${data.INFORMACAO.PAISREGISTRO}</p>
+                            <p><strong>Fabricante:</strong> ${data.INFORMACAO.FABRICANTE}</p>
+                            <p><strong>Distribuidores:</strong> ${data.INFORMACAO.DISTRIBUIDORES}</p>
+                            <p><strong>Marca:</strong> ${data.INFORMACAO.MARCA}</p>
+                        `;
+                    $('#result').html(resultHTML);
+                })
+                .catch(error => console.error('Erro:', error));
+        }
+
+        function salvarConfig() {
+            apiKey = $('#api-key').val();
+            $('#api-key-div').hide();
+        }
+    </script>
+</body>
+
+</html>
