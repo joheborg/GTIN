@@ -32,5 +32,5 @@ def read_item(codZen: str, item_id: int):
 
 if __name__ == "__main__":
     ip = "127.0.0.1" 
-    port = 8000
+    port = 80
     uvicorn.run(app, host=ip, port=port)

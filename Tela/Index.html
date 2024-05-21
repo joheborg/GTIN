@@ -2,7 +2,8 @@
 <html>
 
 <head>
-    <title>Produto API</title>
+    <meta charset="utf-8"/>
+    <title>Pesquisa GTIN Produto</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
         #loading {
@@ -28,7 +29,7 @@
 
 <body>
     <div class="container">
-        <h1 class="mt-5">Produto API</h1>
+        <h1 class="mt-5">Pesquisa GTIN Produto</h1>
         <button id="config-btn" class="btn btn-secondary mb-3">
             <i class="fas fa-cog"></i> Configurações
         </button>
@@ -55,6 +56,8 @@
             $('#config-btn').click(function () {
                 $('#api-key-div').toggle();
             });
+            apiKey = localStorage.getItem('apiKey');
+            $('#api-key').val(apiKey);
         });
 
         function procurarproduto() {
@@ -66,8 +69,8 @@
             var productCode = $('#product-code').val();
             var url = `http://127.0.0.1:8000/${apiKey}/${productCode}`;
             fetch(url)
-            .then(response => response.json())
-            .then(data => {
+                .then(response => response.json())
+                .then(data => {
                     $("body").removeClass("loading");
                     // Atualize o elemento #result com os dados retornados
                     var resultHTML = `
@@ -102,6 +105,7 @@
 
         function salvarConfig() {
             apiKey = $('#api-key').val();
+            localStorage.setItem('apiKey', apiKey);
             $('#api-key-div').hide();
         }
     </script>
