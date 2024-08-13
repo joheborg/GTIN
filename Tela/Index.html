@@ -67,7 +67,7 @@
             }
             $("body").addClass("loading");
             var productCode = $('#product-code').val();
-            var url = `http://127.0.0.1:8000/${apiKey}/${productCode}`;
+            var url = `http://172.18.0.35:3005/${apiKey}/${productCode}`;
             fetch(url)
                 .then(response => response.json())
                 .then(data => {

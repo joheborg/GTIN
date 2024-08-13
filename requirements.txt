@@ -1,0 +1,4 @@
+uvicorn
+bs4
+zenrows
+fastapi

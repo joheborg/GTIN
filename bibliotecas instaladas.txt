@@ -1,4 +1,0 @@
-pip install uvicorn
-pip install bs4
-pip install zenrows
-pip install fastapi
